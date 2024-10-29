@@ -8,6 +8,7 @@ Sub StockDataAnalysis():
     Dim quarterlyChange As Double
     Dim percentChange As Double
     Dim summaryTableRow As Long
+    Dim stockStartRow As Long
     Dim startValue As Long
     Dim lastTicker As String
     Dim lastExtraRow As Long
@@ -35,6 +36,7 @@ Sub StockDataAnalysis():
     summaryTableRow = 0
     total = 0
     quarterlyChange = 0
+    stockStartRow = 2
     startValue = 2
     
     rowCount = ws.Cells(Rows.Count, "A").End(xlUp).row
@@ -93,9 +95,18 @@ Sub StockDataAnalysis():
                 ws.Range("J" & 2 + summaryTableRow).Interior.ColorIndex = 0 ' white
             End If
                 
+            ' conditional formatting for percent change
+            If percentChange > 0 Then
+                ws.Range("K" & 2 + summaryTableRow).Interior.ColorIndex = 4 ' green
+            ElseIf quarterlyChange < 0 Then
+                ws.Range("K" & 2 + summaryTableRow).Interior.ColorIndex = 3 ' red
+            Else
+                ws.Range("K" & 2 + summaryTableRow).Interior.ColorIndex = 0 ' white
+            End If
+                
             ' reset the value
             total = 0
-            percentChange = 0
+            averageChange = 0
             quarterlyChange = 0
             startValue = row + 1
             summaryTableRow = summaryTableRow + 1
@@ -139,7 +150,7 @@ Next row
     
     ' format the summary table
     For s = 0 To summaryTableRow
-        ws.Range("J" & 2 + s).NumberFormat = "0.00"
+        ws.Range("J" & 2 + s).NumberFormat = "0.00%"
         ws.Range("K" & 2 + s).NumberFormat = "0.00%"
         ws.Range("L" & 2 + s).NumberFormat = "#,###"
     Next s
